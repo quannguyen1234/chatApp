@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <h1>let's chat</h1>
+    <form  id="form-submit">
+        <input type="text" placeholder="nhập vào đây" name="message">
+        <button type="submit">submit</button>
+    </form>
+    <div class="message">
+        <ul class="wrap-box">
+
+        </ul>
+    </div>
+    <script>
+        let url = `ws://${window.location.host}/ws/socket-server/`
+        const chatSocket= new WebSocket(url)
+        chatSocket.onmessage= function(e){
+            let data = JSON.parse(e.data)
+            $('.wrap-box').append(`<li> ${data.message} </li>`)
+           
+        }
+        //chatSocket.onclose=function(e){
+            
+        //}
+        let form=document.getElementById('form-submit')
+        form.addEventListener('submit',function(e){
+            e.preventDefault()
+            let message= e.target.message.value
+            if(message){
+                const data={
+                    'type':'chat',
+                    'message':message
+                }
+                const data_raw=JSON.stringify(data)
+                chatSocket.send(data_raw)
+            }
+            
+           
+        })
+        
+    </script>
+</body>
+</html>
